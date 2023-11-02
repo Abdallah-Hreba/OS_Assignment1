@@ -19,8 +19,9 @@ class Parser {
 
 public class Terminal extends Parser{
     Parser parser;
-    //Implement each command in a method, for example:
+    //going to implement each command in a method
 
+    // method to list the files in the current directory in a reverse order
     public void ls() {
     // Get the current directory
           File currentDirectory = new File(System.getProperty("user.dir"));
@@ -35,9 +36,11 @@ public class Terminal extends Parser{
             System.out.println(file.getName());
         }
    }
-   static boolean keepgoing = true;
-   static Stack<String> stack = new Stack<String>();
+   // important static variables
+   static boolean keepgoing = true;// boolean to end the do while loop in main
+   static Stack<String> stack = new Stack<String>();// a stack to store the commands
 
+   // method to list the files in the current directory in a reverse order
    public static void lsR() {
         // Get the current directory
         File currentDirectory = new File(System.getProperty("user.dir"));
@@ -45,16 +48,15 @@ public class Terminal extends Parser{
         // List the contents of the current directory
         File[] files = currentDirectory.listFiles();
 
-        // Sort the files in reverse alphabetical order
-        Arrays.sort(files, Comparator.comparing(File::getName).reversed());
 
-        // Print the contents of the current directory
-        for (File file : files) {
-            System.out.println(file.getName());
+        // Print the contents of the current directory in reverse order
+        for (int i = files.length-1; i >= 0; i--) {
+            System.out.println(files[i].getName());
         }
+        
     }
 
-
+    // a method to implement the echo command
   public void echo(String[] args) {
   if (args.length != 1) {
     System.out.println("Invalid arguments. Usage: echo <message>");
@@ -64,9 +66,9 @@ public class Terminal extends Parser{
   String message = args[0];
   System.out.println(message);
 }
-
+    // a method to print the current working directory
   public void pwd() {
-  // Get the current working directory
+  // storing the current directory in a string
   String currentDirectory = System.getProperty("user.dir");
 
   // Print the current directory
@@ -102,17 +104,17 @@ public class Terminal extends Parser{
             }
 
         } else {
-            // Handle the entered paths with spaces wrapped in double quotes
+            // Handling the entered paths with spaces wrapped
             String newDirPath = String.join(" ", args);
 
-            // Remove the double quotations that may enclose the entered paths
+            // Removing the double quotations
             if (newDirPath.startsWith("\"") && newDirPath.endsWith("\"")) {
                 newDirPath = newDirPath.substring(1, newDirPath.length() - 1);
             }
 
             // If the path is absolute
             if (newDirPath.startsWith("/") || newDirPath.matches("^[A-Za-z]:\\\\.*$")) {
-                // Check that the entered path is a directory path
+                // Checking that the entered path is a directory path
                 if (new File(newDirPath).isDirectory()) {
                     System.setProperty("user.dir", newDirPath);
                     System.out.println("The current working directory is: " + System.getProperty("user.dir"));
@@ -121,12 +123,11 @@ public class Terminal extends Parser{
                     System.out.println("Please make sure this is a valid directory path.");
                 }
 
-                // If the path is relative
             } else {
-                // Get the target directory path by combining the current directory path with the new directory path
+                // Getting the target directory 
                 String targetDirPath = currentDirPath + File.separator + newDirPath;
 
-                // Check that the entered path is a directory path
+                //an if condition for Checking that the entered path is a directory path
                 if (new File(targetDirPath).isDirectory()) {
                     System.setProperty("user.dir", targetDirPath);
                     System.out.println("The current working directory is: " + System.getProperty("user.dir"));
@@ -138,7 +139,7 @@ public class Terminal extends Parser{
         }
     }
 
-    
+    // a method to make new directories as much as we want in the current working directory
 public void mkdir(String[] args) {
         if (args.length >= 1) {
             String currentDirectory = System.getProperty("user.dir");
@@ -154,7 +155,6 @@ public void mkdir(String[] args) {
                     System.out.println(arg + " already exists at the specified location.");
                 } else {
                     boolean created = item.mkdirs();
-
                     if (created) {
                         System.out.println("Created: " + item.getAbsolutePath());
                     } else {
@@ -163,7 +163,6 @@ public void mkdir(String[] args) {
                     }
                 }
             }
-
             if (success) {
                 System.out.println("All items created successfully.");
             } else {
@@ -173,7 +172,7 @@ public void mkdir(String[] args) {
             System.out.println("Invalid usage. Please provide item name(s).");
         }
     }
-
+    // a method to make files in our directory nd other directories too
     public void touch(String[] name)
     {
         try {
@@ -189,7 +188,7 @@ public void mkdir(String[] args) {
             e.printStackTrace();
         }
     }
-
+    // a method to delete files in current working directory
     public void rm(String[] fname)
     {
         File f = new File(fname[0]);
@@ -220,7 +219,7 @@ public void mkdir(String[] args) {
         }
         return directory.delete();
     }
-
+    //a method to remove empty directories
     public void rmdir(String[] args) {
         File directory = new File(args[0]);
         
@@ -239,7 +238,7 @@ public void mkdir(String[] args) {
         else {System.out.println("Wrong argument.");}
       
     }
-
+    // static method to cat one file as argument
     static void OneFile(String file1) {
         try (BufferedReader br = new BufferedReader(new FileReader(file1))) {
             String line;
@@ -250,7 +249,7 @@ public void mkdir(String[] args) {
             System.err.println("something wrong with the input");
         }
     }
-
+    // static method to cat two files as arguments
     static void TwoFiles(String file1, String file2) {
         try (BufferedReader br1 = new BufferedReader(new FileReader(file1));
                 BufferedReader br2 = new BufferedReader(new FileReader(file2))) {
@@ -266,7 +265,7 @@ public void mkdir(String[] args) {
             System.err.println("something wrong with the input");
         }
     }
-
+    // a method to show the contents of a file
     public void cat(String[] args)
     {
         int size = args.length;
@@ -277,14 +276,128 @@ public void mkdir(String[] args) {
             OneFile(args[0]);
         }
     }
-
+    // a method to get our CLI history using a stack
     public void history()
     {
         System.out.println(stack);
     }
+    // a method to copy two files 
+    public void cp(String[] s)
+    {
+        String source = s[0];
+        String destination = s[1] ;
+
+        try{
+            File sourceFile = new File(source);
+            File destinationFile = new File(destination);
+
+            if (!sourceFile.exists()){
+                System.out.println("the source file Not Found !");
+                System.exit(1);
+            }
+            File parentDir = destinationFile.getParentFile();
+            if (parentDir != null && !parentDir.exists()) {
+                parentDir.mkdirs();
+            }
+            FileInputStream inputStream = new FileInputStream(sourceFile);
+            FileOutputStream outputStream = new FileOutputStream(destinationFile);
+
+            // Buffer to hold data while copying
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+
+            // Close the streams
+            inputStream.close();
+            outputStream.close();
+
+            System.out.println("File copied successfully.");
+
+        }catch (Exception e){
+            e.printStackTrace();
+            System.out.println("Error copying the file.");
+        }
+    }
+    // a method for copying the contents of two directories
+    public void cp_r(String[] s){
+        String source = s[1];
+        String destination = s[2] ;
+        
+        try{
+            File sourceDirectory = new File(source);
+            File destinationDirectory = new File(destination);
+
+            if (!sourceDirectory.exists()) {
+                System.out.println("Source directory does not exist.");
+                System.exit(1);
+            }
+
+            if (!destinationDirectory.exists()) {
+                destinationDirectory.mkdirs();
+            }
+
+            CFR(sourceDirectory, destinationDirectory);
+            System.out.println("Directory copied successfully.");
+
+        }catch (Exception e){
+            e.printStackTrace();
+            System.out.println("Error copying the directory.");
+        }
+    }
+    // private method to recursively copy files
+    private static void CFR(File source, File destination) throws IOException {
+        if (source.isDirectory()) {
+            if (!destination.exists()) {
+                destination.mkdir();
+            }
+
+            String[] files = source.list();
+            for (String file : files) {
+                File srcFile = new File(source, file);
+                File destFile = new File(destination, file);
+                CFR(srcFile, destFile);
+            }
+        } else {
+            try (InputStream in = new FileInputStream(source);
+                 OutputStream out = new FileOutputStream(destination)) {
+
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = in.read(buffer)) > 0) {
+                    out.write(buffer, 0, length);
+                }
+            }
+        }
+    }
+    // a method for the word counter command
+    public static void wc(String fileName) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+            int lineCount = 0;
+            int wordCount = 0;
+            int charCount = 0;
+
+            String line;
+            //while loop to count the lines in our file
+            while ((line = reader.readLine()) != null) {
+                lineCount++;
+                String[] words = line.trim().split("\\s+");// using regular expressions to count words
+                wordCount += words.length;
+                charCount += line.length();
+            }
+
+            System.out.println(lineCount + " " + wordCount + " " + charCount + " " + fileName);
+
+        } catch (IOException e) {
+            System.out.println("An error occurred while reading the file:");
+            e.printStackTrace();
+        }
+    }
+
     
 
-    //This method will choose the suitable command method to be called
+    //overriding this method to proberly parse the input
     @Override
     public boolean parse(String input) {
         String[] parts = input.trim().split("\\s+");
@@ -293,8 +406,9 @@ public void mkdir(String[] args) {
         System.arraycopy(parts, 1, this.args, 0, this.args.length);
         return true;
     }
+    //This method will choose the suitable command method to be called
     public void chooseCommandAction(){
-        switch (getCommandName()) {
+        switch (getCommandName()) {// switch statement to choose which command to implement 
             case "mkdir":
                 mkdir(getArgs());
                 break;
@@ -317,11 +431,16 @@ public void mkdir(String[] args) {
                 pwd();
                break;
            case "ls":
-                ls();
-               break;
-            case "ls -r":
-                lsR();
-               break;
+                //inner if condition to determine the appropriate method
+                if (getArgs().length > 0) {
+                    lsR();
+                    break;
+                }
+                else
+                {
+                    ls();
+                    break;
+                }
             case "cat":
                 cat(getArgs());
                 break;
@@ -331,34 +450,33 @@ public void mkdir(String[] args) {
             case "exit":
                 keepgoing = false;
                 break;
+            case "cp":
+                //inner if condition to determine the appropriate method
+                if (getArgs().length > 2) {
+                    cp_r(getArgs());
+                    break;
+                }
+                else
+                {
+                    cp(getArgs());
+                    break;
+                }
+            case "wc":
+                wc(getArgs()[0]);
+                break;
             default:
                 System.out.println("wrong command!");
                 break;
         }
     }
+    // Our main program to run the CLI properly till the user chooses to exit
     public static void main(String[] args)
     {
-        // Terminal terminal = new Terminal();
-        // // Scanner in = new Scanner(System.in);
-        // // String input = in.nextLine();
-        // // terminal.parse(input);
-        // // terminal.chooseCommandAction();
-        // Stack<String> stack = new Stack<String>();
-        // for (int i = 0; i < 6; i++) {
-        //     Scanner myObj = new Scanner(System.in);
-        //     String input = myObj.nextLine();
-        //     stack.push(input);
-        //     terminal.parse(input);
-        //     terminal.chooseCommandAction();
-        // }
-
-        // System.out.println(stack);
-        // boolean keepgoing = true;
         Terminal terminal = new Terminal();
-        Scanner myObj = new Scanner(System.in);
+        Scanner in = new Scanner(System.in);
         do {
-            String input = myObj.nextLine();
-            stack.push(input);
+            String input = in.nextLine();
+            stack.push(input);// pushing our input to the stack for the history command
             terminal.parse(input);
             terminal.chooseCommandAction();
         } while (keepgoing);
